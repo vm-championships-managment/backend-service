@@ -1,12 +1,14 @@
 package entities
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
 
-	internal_errors "github.com/vm-championships-manager/backend-service/internal/errors"
+	errors_adapters "github.com/vm-championships-manager/backend-service/internal/errors/adapters"
+	errors_protocols "github.com/vm-championships-manager/backend-service/internal/errors/protocols"
 )
 
 type User struct {
@@ -17,20 +19,20 @@ type User struct {
 	Phone     string `json:"phone,omitempty"`
 }
 
-func (u *User) Validate() (bool, error) {
+func (u *User) Validate() errors_protocols.CustomError {
 	errs := []string{}
 
-	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	emailRegex := regexp.MustCompile(`^(?i)[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	if !emailRegex.Match([]byte(u.Email)) {
 		errs = append(errs, "email")
 	}
 
-	nameRegex := regexp.MustCompile(`^[a-z]+$`)
+	nameRegex := regexp.MustCompile(`^(?i)[a-z]+$`)
 	if !nameRegex.Match([]byte(u.Name)) {
 		errs = append(errs, "name")
 	}
 
-	lastNameRegex := regexp.MustCompile(`^([a-z]+(\s?)){1,}$`)
+	lastNameRegex := regexp.MustCompile(`^(?i)([a-z]+(\s?)){1,}$`)
 	if !lastNameRegex.Match([]byte(u.LastName)) {
 		errs = append(errs, "last_name")
 	}
@@ -46,8 +48,8 @@ func (u *User) Validate() (bool, error) {
 
 	if len(errs) > 0 {
 		sort.Strings(errs)
-		return false, internal_errors.EntityValidationError(strings.Join(errs, ", "))
+		return errors_adapters.NewEntityValidationError(fmt.Sprintf("[User]: invalid fields %s", strings.Join(errs, ", ")))
 	}
 
-	return true, nil
+	return nil
 }

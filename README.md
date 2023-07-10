@@ -1,1 +1,1 @@
-# Backend service vm-championship-manager
+# Backend service vm-championship-managment

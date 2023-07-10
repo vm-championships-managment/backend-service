@@ -1,0 +1,10 @@
+aws:
+  access_key_id: "asd"
+  secret_access_key: "asd"
+  region: "us-east-1"
+  dynamodb:
+    endpoint: http://localhost:4566
+  cognito:
+    roles:
+      - name: "asd"
+        pool_id: "123"
